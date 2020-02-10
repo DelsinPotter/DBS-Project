@@ -118,7 +118,8 @@ public class SummonScreen extends javax.swing.JFrame {
         r = new Random();
         
         int x = r.nextInt(5);
-				result=s.executeQuery("Select * from cards where card_id="+x+";");
+		result=s.executeQuery("Select * from cards where card_id="+x+";");
+	    	result.next();
 		String a=result.getString(2);
 		String image="C:\\Users\\USER\\Downloads\\naruto cards\\"+result.getString(3);
 		String c="C:\\Users\\USER\\Downloads\\Final sounds NAruto\\"+result.getString(4);
