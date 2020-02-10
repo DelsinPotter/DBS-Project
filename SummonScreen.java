@@ -70,7 +70,7 @@ public class SummonScreen extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setBackground(new java.awt.Color(255, 255, 255));
-        getContentPane().setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+        getContentPane().setLayout(new FlowLayout());
 
         jLabel1.setIcon(new javax.swing.ImageIcon("C:\\Users\\USER\\Downloads\\naruto cards\\EBRwhM4WwAAe0Xw.png")); // NOI18N
         getContentPane().add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, -1, -1));
@@ -85,15 +85,13 @@ public class SummonScreen extends javax.swing.JFrame {
 
         jButton2.setText("Multi-Summon");
         getContentPane().add(jButton2, new org.netbeans.lib.awtextra.AbsoluteConstraints(530, 420, 130, 37));
+	    
 
         pack();
     }// </editor-fold>                        
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {                                         
-        jButton1.setLocation(530,200);
-        //String s="C:\\Users\\USER\\Downloads\\SSGSSGogetaActiveSkill.wav";
-        //String s="C:\\Users\\USER\\Downloads\\Final sounds NAruto\\Ikuyo min.wav";
-        
+       setLayout(New FlowLayout());
         Cards sum=summon();
         String s=sum.getVoice();
         try {
@@ -118,6 +116,8 @@ public class SummonScreen extends javax.swing.JFrame {
         r = new Random();
         
         int x = r.nextInt(5);
+	    if(x==0)
+		    x=1;     //card_id=0 does not exist
 		result=s.executeQuery("Select * from cards where card_id="+x+";");
 	    	result.next();
 		String a=result.getString(2);
