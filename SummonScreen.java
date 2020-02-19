@@ -118,7 +118,9 @@ public class SummonScreen extends javax.swing.JFrame {
         int x = r.nextInt(5);
 	    if(x==0)
 		    x=1;     //card_id=0 does not exist
-		result=s.executeQuery("Select * from cards where card_id="+x+";");
+	    	PreparedStatement p= conn.prepareStatement("Select * from cards where card_id=?;");
+	    	p.setInt(1,x);		
+	    	result=p.executeQuery();
 	    	result.next();
 		String a=result.getString(2);
 		String image="C:\\Users\\USER\\Downloads\\naruto cards\\"+result.getString(3);
