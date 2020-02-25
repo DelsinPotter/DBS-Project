@@ -3,55 +3,38 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.mycompany.narutogacha;
+package narutodatabase;
 
+import java.awt.FlowLayout;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Random;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.UnsupportedAudioFileException;
 import javax.swing.ImageIcon;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
+import java.sql.*;
+
 /**
  *
  * @author USER
  */
-public class SummonScreen extends javax.swing.JFrame {
-	Statement s;
-    Connection conn;
-	ResultSet result;
-    public static Cards c1;
-    ArrayList<Cards> a=new ArrayList<>(15);
-
-    /**
-     * Creates new form SummonScreen
-     */
-    public SummonScreen() {
-		try {
-            Class.forName("oracle.jdbc.driver.OracleDriver");
-        } catch (ClassNotFoundException ex) {
-            Logger.getLogger(Summoooooon.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        
-        try {
-    // db parameters
-    String url       = "jdbc:oracle:thin:@localhost:1521:xe";
-    String user      = "sys";
-    String password  = "voldemort";
+public class DatabaseSummon extends javax.swing.JFrame {
+    Cards c1;
+    Statement stmt;
+    ResultSet result;
+    Connection con;
     
-    // create a connection to the database
-    conn = DriverManager.getConnection(url, user, password);
-    // more processing here
-    // ...    
-} catch(SQLException e) {
-   System.out.println(e.getMessage());
-}
-		s=conn.createStatement();
-        ArrayList<Cards> mycards = new ArrayList<>(20);
+    
+    /**
+     * Creates new form DatabaseSummon
+     */
+    public DatabaseSummon() {
+        try{   
+    con=DriverManager.getConnection("jdbc:mysql://localhost:3306/narutocards?useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC"
+        ,"root","voldemort");
+    stmt=con.createStatement(); 
+}catch(Exception e){ System.out.println(e);} 
         initComponents();
     }
 
@@ -66,70 +49,74 @@ public class SummonScreen extends javax.swing.JFrame {
 
         jLabel1 = new javax.swing.JLabel();
         jButton1 = new javax.swing.JButton();
-        jButton2 = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        setBackground(new java.awt.Color(255, 255, 255));
-        getContentPane().setLayout(new FlowLayout());
+        setPreferredSize(new java.awt.Dimension(750, 500));
+        getContentPane().setLayout(new java.awt.FlowLayout());
 
         jLabel1.setIcon(new javax.swing.ImageIcon("C:\\Users\\USER\\Downloads\\naruto cards\\EBRwhM4WwAAe0Xw.png")); // NOI18N
-        getContentPane().add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, -1, -1));
+        getContentPane().add(jLabel1);
 
-        jButton1.setText("Single Summon");
+        jButton1.setText("Summon");
+        jButton1.setMaximumSize(new java.awt.Dimension(90, 30));
+        jButton1.setMinimumSize(new java.awt.Dimension(90, 30));
+        jButton1.setPreferredSize(new java.awt.Dimension(90, 30));
         jButton1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton1ActionPerformed(evt);
             }
         });
-        getContentPane().add(jButton1, new org.netbeans.lib.awtextra.AbsoluteConstraints(77, 418, 128, 37));
-
-        jButton2.setText("Multi-Summon");
-        getContentPane().add(jButton2, new org.netbeans.lib.awtextra.AbsoluteConstraints(530, 420, 130, 37));
-	    
+        getContentPane().add(jButton1);
 
         pack();
     }// </editor-fold>                        
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {                                         
-       setLayout(New FlowLayout());
+    setLayout(new FlowLayout());
+        //String s="C:\\Users\\USER\\Downloads\\SSGSSGogetaActiveSkill.wav";
+        //String s="C:\\Users\\USER\\Downloads\\Final sounds NAruto\\Ikuyo min.wav";
+        
         Cards sum=summon();
         String s=sum.getVoice();
         try {
             Ikuzo ik=new Ikuzo(s);
             ik.play();
         } catch (UnsupportedAudioFileException ex) {
-            Logger.getLogger(SummonScreen.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(DatabaseSummon.class.getName()).log(Level.SEVERE, null, ex);
         } catch (IOException ex) {
-            Logger.getLogger(SummonScreen.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(DatabaseSummon.class.getName()).log(Level.SEVERE, null, ex);
         } catch (LineUnavailableException ex) {
-            Logger.getLogger(SummonScreen.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(DatabaseSummon.class.getName()).log(Level.SEVERE, null, ex);
         }
-        a.add(sum);
+        //a.add(sum);
         System.out.print(sum.path);
         ImageIcon i=sum.getImg();
         setSize(getWidth(),i.getIconHeight());
         jLabel1.setIcon(i);
+// TODO add your handling code here:
     }                                        
-
     public Cards summon() {        
-        Random r;
-        r = new Random();
-        
-        int x = r.nextInt(5);
-	    if(x==0)
-		    x=1;     //card_id=0 does not exist
-	    	PreparedStatement p= conn.prepareStatement("Select * from cards where card_id=?;");
-	    	p.setInt(1,x);		
-	    	result=p.executeQuery();
-	    	result.next();
-		String a=result.getString(2);
-		String image="C:\\Users\\USER\\Downloads\\naruto cards\\"+result.getString(3);
-		String c="C:\\Users\\USER\\Downloads\\Final sounds NAruto\\"+result.getString(4);
-        ImageIcon b=new ImageIcon(image);
-		c1=new Cards(a,b,c);
-		return c1;
+        try {
+            Random r;
+            r = new Random();
+            
+            int x = r.nextInt(8);
+            
+            if(x==0)
+                x=1;
+            result=stmt.executeQuery("select * from narutocards.card where card_id="+x+";");
+            result.next();
+            String a=result.getString(2);
+            String image="C:\\Users\\USER\\Downloads\\naruto cards\\"+result.getString(3);
+            String c="C:\\Users\\USER\\Downloads\\Final sounds NAruto\\"+result.getString(5);
+            ImageIcon b=new ImageIcon(image);
+            c1=new Cards(a,b,c);
+            
+        } catch (SQLException ex) {
+            Logger.getLogger(DatabaseSummon.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    return c1;
     }
-
     /**
      * @param args the command line arguments
      */
@@ -147,27 +134,26 @@ public class SummonScreen extends javax.swing.JFrame {
                 }
             }
         } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(SummonScreen.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(DatabaseSummon.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(SummonScreen.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(DatabaseSummon.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(SummonScreen.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(DatabaseSummon.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(SummonScreen.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(DatabaseSummon.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
         //</editor-fold>
 
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new SummonScreen().setVisible(true);
+                new DatabaseSummon().setVisible(true);
             }
         });
     }
 
     // Variables declaration - do not modify                     
     private javax.swing.JButton jButton1;
-    private javax.swing.JButton jButton2;
     private javax.swing.JLabel jLabel1;
     // End of variables declaration                   
 }
