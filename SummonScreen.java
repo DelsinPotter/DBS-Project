@@ -100,7 +100,7 @@ public class DatabaseSummon extends javax.swing.JFrame {
             Random r;
             r = new Random();
             
-            int x = r.nextInt(8);
+            int x = r.nextInt(11);
             
             if(x==0)
                 x=1;
